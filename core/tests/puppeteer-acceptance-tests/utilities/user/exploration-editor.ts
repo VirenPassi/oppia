@@ -98,6 +98,7 @@ const currentCardNameContainerSelector = '.e2e-test-state-name-container';
 
 const previewTabButton = '.e2e-test-preview-tab';
 const previewTabContainer = '.e2e-test-preview-tab-container';
+const improvementsTabButton = '.e2e-test-improvements-tab';
 const mobilePreviewTabButton = '.e2e-test-mobile-preview-button';
 const mainTabButton = '.e2e-test-main-tab';
 const mobileMainTabButton = '.e2e-test-mobile-main-tab';
@@ -403,7 +404,6 @@ const commonModalBodySelector = '.e2e-test-modal-body';
 const previousConversationToggleSelector = '.e2e-test-previous-responses-text';
 
 const lessonInfoCardSelector = '.e2e-test-lesson-info-card';
-const improvementsTabButton = '.e2e-test-improvements-tab';
 const formErrorContainer = '.e2e-test-form-error-container';
 const numberWithUnitsModalSelector =
   '.e2e-test-number-with-units-help-modal-header';
@@ -829,11 +829,13 @@ export class ExplorationEditor extends BaseUser {
         el => (el as HTMLTextAreaElement).value
       )
     ).toBe(feedback);
+
     await this.clickOnElementWithSelector(createThreadButtonSelector);
     await this.page.waitForSelector(newFeedbackThreadModalSelector, {
       visible: false,
     });
   }
+
   /**
    * Function to verify if the feedback thread is present
    * @param {string} feedbackSubject - The feedback subject to be verified
@@ -2713,7 +2715,8 @@ export class ExplorationEditor extends BaseUser {
     try {
       return await confirmPublish();
     } catch (error) {
-      showMessage('Failed to publish the exploration.\n' + error.stack);
+      const errorMessage = (error as Error).stack;
+      showMessage('Failed to publish the exploration.\n' + errorMessage);
 
       const errorSavingExplorationElement = await this.page.$(
         errorSavingExplorationModal
@@ -2782,17 +2785,16 @@ export class ExplorationEditor extends BaseUser {
       await this.expectElementToBeVisible(dismissWelcomeModalSelector, false);
       showMessage('Tutorial pop-up closed successfully.');
     } catch (error) {
-      const errorMessage = (error as Error).message;
       if (!failIfMissing) {
         showMessage(
           'Welcome Modal not found, but test can be continued.\n' +
-            `Error: ${errorMessage}`
+            `Error: ${error.message}`
         );
-        return;
+      } else {
+        throw new Error(
+          'Welcome Modal not found.\n' + 'Actual Error:\n' + error.message
+        );
       }
-      throw new Error(
-        'Welcome Modal not found.\n' + 'Actual Error:\n' + errorMessage
-      );
     }
   }
 
@@ -2859,7 +2861,6 @@ export class ExplorationEditor extends BaseUser {
     // Dismiss the welcome modal if it appears (handles race condition where
     // modal appears after previous dismissWelcomeModal call).
     await this.dismissWelcomeModalIfPresent();
-
     await this.page.waitForSelector(stateEditSelector, {
       visible: true,
     });
@@ -3208,7 +3209,8 @@ export class ExplorationEditor extends BaseUser {
         throw new Error('The goal does not match the expected goal.');
       }
     } catch (error) {
-      console.error('Error:', error.message);
+      const errorMessage = (error as Error).message;
+      console.error('Error:', errorMessage);
       throw error;
     }
   }

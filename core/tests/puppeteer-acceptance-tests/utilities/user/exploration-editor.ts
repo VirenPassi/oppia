@@ -403,6 +403,7 @@ const commonModalBodySelector = '.e2e-test-modal-body';
 const previousConversationToggleSelector = '.e2e-test-previous-responses-text';
 
 const lessonInfoCardSelector = '.e2e-test-lesson-info-card';
+const improvementsTabButton = '.e2e-test-improvements-tab';
 const formErrorContainer = '.e2e-test-form-error-container';
 const numberWithUnitsModalSelector =
   '.e2e-test-number-with-units-help-modal-header';
@@ -486,6 +487,20 @@ const UNPUBLISHED_EXPLORATION_ZIP_FILE_PREFIX =
 const PUBLISHED_EXPLORATION_ZIP_FILE_PREFIX =
   'oppia-Publishwithaninteraction-v';
 export class ExplorationEditor extends BaseUser {
+  async waitForModalToDetach(): Promise<void> {
+    try {
+      await this.page.waitForSelector('ngb-modal-window', {
+        hidden: true,
+        timeout: 30000,
+      });
+      await this.page.waitForSelector('ngb-modal-backdrop', {
+        hidden: true,
+        timeout: 30000,
+      });
+    } catch (e) {
+      // Already detached
+    }
+  }
   /**
    * Checks if the interaction name is as expected.
    * @param name The name of the interaction.
@@ -2857,6 +2872,7 @@ export class ExplorationEditor extends BaseUser {
     // Dismiss the welcome modal if it appears (handles race condition where
     // modal appears after previous dismissWelcomeModal call).
     await this.dismissWelcomeModalIfPresent();
+    await this.waitForModalToDetach();
     await this.page.waitForSelector(stateEditSelector, {
       visible: true,
     });
@@ -2923,6 +2939,7 @@ export class ExplorationEditor extends BaseUser {
     interactionToAdd: string,
     skipInteractionCustoization: boolean = true
   ): Promise<void> {
+    await this.waitForModalToDetach();
     await this.page.waitForSelector(addInteractionButton, {
       visible: true,
     });

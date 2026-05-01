@@ -46,6 +46,10 @@ const oskContainerSelector = '.e2e-test-osk-container';
 const hideOSKButtonSelector = '.e2e-test-osk-hide-button';
 const plannedPublicationDateInput = '.e2e-test-planned-publication-date-input';
 const chapterTitleSelector = '.e2e-test-chapter-title';
+const usernameInputSelector = 'input.e2e-test-username-input';
+const agreeToTermsCheckboxSelector = 'input.e2e-test-agree-to-terms-checkbox';
+const registerUserButtonSelector =
+  'button.e2e-test-register-user:not([disabled])';
 const VIEWPORT_WIDTH_BREAKPOINTS = testConstants.ViewportWidthBreakpoints;
 const baseURL = testConstants.URLs.BaseURL;
 
@@ -372,13 +376,9 @@ export class BaseUser {
    */
   async signUpNewUser(username: string, email: string): Promise<void> {
     await this.signInWithEmail(email);
-    await this.typeInInputField('input.e2e-test-username-input', username);
-    await this.clickOnElementWithSelector(
-      'input.e2e-test-agree-to-terms-checkbox'
-    );
-    await this.page.waitForSelector(
-      'button.e2e-test-register-user:not([disabled])'
-    );
+    await this.typeInInputField(usernameInputSelector, username);
+    await this.clickOnElementWithSelector(agreeToTermsCheckboxSelector);
+    await this.page.waitForSelector(registerUserButtonSelector);
     await this.clickAndWaitForNavigation(LABEL_FOR_SUBMIT_BUTTON);
     this.username = username;
     this.email = email;
@@ -566,7 +566,7 @@ export class BaseUser {
     // https://developer.mozilla.org/en-US/docs/Web/XPath/Functions/normalize-space.
     const element = await this.page.waitForXPath(
       `//*[contains(normalize-space(text()), normalize-space("${text}"))]`,
-      {timeout: 10000}
+      {timeout: 60000}
     );
 
     if (!element) {

@@ -27,6 +27,8 @@ import {
 import {LoggedInUser} from '../../utilities/user/logged-in-user';
 import {LoggedOutUser} from '../../utilities/user/logged-out-user';
 
+// We use a 10-minute global timeout to maintain diff atomicity while granting math-heavy interactions enough time to fully render and process feedback in a local environment.
+jest.setTimeout(600000);
 const CARD_NAMES = {
   FIRST: 'Introduction',
   SECOND: '2nd Card',

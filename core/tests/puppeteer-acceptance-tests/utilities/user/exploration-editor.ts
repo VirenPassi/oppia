@@ -487,20 +487,6 @@ const UNPUBLISHED_EXPLORATION_ZIP_FILE_PREFIX =
 const PUBLISHED_EXPLORATION_ZIP_FILE_PREFIX =
   'oppia-Publishwithaninteraction-v';
 export class ExplorationEditor extends BaseUser {
-  async waitForModalToDetach(): Promise<void> {
-    try {
-      await this.page.waitForSelector('ngb-modal-window', {
-        hidden: true,
-        timeout: 30000,
-      });
-      await this.page.waitForSelector('ngb-modal-backdrop', {
-        hidden: true,
-        timeout: 30000,
-      });
-    } catch (e) {
-      // Already detached
-    }
-  }
   /**
    * Checks if the interaction name is as expected.
    * @param name The name of the interaction.
@@ -517,7 +503,9 @@ export class ExplorationEditor extends BaseUser {
   async removeFeedbackResponseInPreviewTab(): Promise<void> {
     await this.expectElementToBeVisible(feedbackResponseRemoveSelector);
     // Wait for the response modal animation to finish, else it causes flakiness.
-    await this.page.waitForTimeout(2000);
+    await this.page.waitForSelector(feedbackResponseRemoveSelector, {
+      visible: true,
+    });
     await this.clickOnElementWithSelector(feedbackResponseRemoveSelector);
     await this.expectElementToBeVisible(feedbackResponseRemoveSelector, false);
   }
@@ -841,13 +829,11 @@ export class ExplorationEditor extends BaseUser {
         el => (el as HTMLTextAreaElement).value
       )
     ).toBe(feedback);
-
     await this.clickOnElementWithSelector(createThreadButtonSelector);
     await this.page.waitForSelector(newFeedbackThreadModalSelector, {
       visible: false,
     });
   }
-
   /**
    * Function to verify if the feedback thread is present
    * @param {string} feedbackSubject - The feedback subject to be verified
@@ -2796,16 +2782,17 @@ export class ExplorationEditor extends BaseUser {
       await this.expectElementToBeVisible(dismissWelcomeModalSelector, false);
       showMessage('Tutorial pop-up closed successfully.');
     } catch (error) {
+      const errorMessage = (error as Error).message;
       if (!failIfMissing) {
         showMessage(
           'Welcome Modal not found, but test can be continued.\n' +
-            `Error: ${error.message}`
+            `Error: ${errorMessage}`
         );
-      } else {
-        throw new Error(
-          'Welcome Modal not found.\n' + 'Actual Error:\n' + error.message
-        );
+        return;
       }
+      throw new Error(
+        'Welcome Modal not found.\n' + 'Actual Error:\n' + errorMessage
+      );
     }
   }
 
@@ -2872,7 +2859,7 @@ export class ExplorationEditor extends BaseUser {
     // Dismiss the welcome modal if it appears (handles race condition where
     // modal appears after previous dismissWelcomeModal call).
     await this.dismissWelcomeModalIfPresent();
-    await this.waitForModalToDetach();
+
     await this.page.waitForSelector(stateEditSelector, {
       visible: true,
     });
@@ -2939,11 +2926,14 @@ export class ExplorationEditor extends BaseUser {
     interactionToAdd: string,
     skipInteractionCustoization: boolean = true
   ): Promise<void> {
-    await this.waitForModalToDetach();
     await this.page.waitForSelector(addInteractionButton, {
       visible: true,
     });
 
+    // Wait for any loading overlays to detach before clicking.
+    await this.page.waitForSelector('.oppia-loading-full-page', {
+      hidden: true,
+    });
     await this.clickOnElementWithSelector(addInteractionButton);
 
     // Check if modal title is correct.
@@ -2954,7 +2944,15 @@ export class ExplorationEditor extends BaseUser {
     );
 
     await this.waitForNetworkIdle();
-    await this.clickOnElementWithText(interactionToAdd);
+    // Use a higher timeout for math interactions as they are heavy to render.
+    const interactionElement = await this.page.waitForXPath(
+      `//*[contains(normalize-space(text()), normalize-space("${interactionToAdd}"))]`,
+      {timeout: 30000}
+    );
+    if (!interactionElement) {
+      throw new Error(`Interaction "${interactionToAdd}" not found in modal.`);
+    }
+    await this.clickOnElement(interactionElement);
     if (skipInteractionCustoization) {
       await this.expectCustomizeInteractionTitleToBe(
         `Customize Interaction (${interactionToAdd})`
@@ -4328,8 +4326,11 @@ export class ExplorationEditor extends BaseUser {
       await this.clickOnElementWithSelector(previewTabButton);
     }
 
-    await this.expectElementToBeVisible(previewTabContainer);
+    await this.page.waitForFunction(() =>
+      window.location.href.includes('#/preview/')
+    );
     await this.waitForPageToFullyLoad();
+    await this.page.waitForSelector(previewTabContainer, {visible: true});
   }
 
   /**
@@ -7180,6 +7181,15 @@ export class ExplorationEditor extends BaseUser {
       confirmDeleteInteractionButtonSelector,
       false
     );
+  }
+  /**
+   * Function to verify that the improvements tab is hidden.
+   * @param visible - Expected visibility.
+   */
+  async expectImprovementsTabToBePresnt(
+    visible: boolean = true
+  ): Promise<void> {
+    await this.expectElementToBeVisible(improvementsTabButton, visible);
   }
 }
 

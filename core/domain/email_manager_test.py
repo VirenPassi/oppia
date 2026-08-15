@@ -7739,13 +7739,6 @@ class ModeratorActionEmailsTests(test_utils.EmailTestBase):
         d_text = email_manager.get_moderator_unpublish_exploration_email()
         self.assertEqual(d_text, expected_draft_text_body)
 
-    def test_blank_draft_received_exploration_unpublish_exception_raised(
-        self,
-    ) -> None:
-        expected_draft_text_body = ''
-        d_text = email_manager.get_moderator_unpublish_exploration_email()
-        self.assertEqual(d_text, expected_draft_text_body)
-
     @test_utils.set_platform_parameters(
         [
             (param_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),

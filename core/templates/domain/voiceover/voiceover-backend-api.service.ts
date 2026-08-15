@@ -150,15 +150,6 @@ export class VoiceoverBackendApiService {
         .toPromise()
         .then(
           response => {
-            // Temporary hardcode for local testing to allow accent selection
-            response.language_accent_master_list['en'] = {
-              'en-US': 'English (United States)',
-              'en-GB': 'English (United Kingdom)',
-            };
-            response.language_codes_mapping['en'] = {
-              'en-US': true,
-              'en-GB': true,
-            };
             resolve({
               languageAccentMasterList: response.language_accent_master_list,
               languageCodesMapping: response.language_codes_mapping,

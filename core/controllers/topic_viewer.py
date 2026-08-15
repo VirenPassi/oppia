@@ -26,8 +26,6 @@ from core.domain import (
     email_manager,
     exp_fetchers,
     feature_flag_services,
-    platform_parameter_list,
-    platform_parameter_services,
     skill_services,
     story_domain,
     story_fetchers,

@@ -360,8 +360,7 @@ export class TranslatorOverviewComponent implements OnInit {
     if (
       lastSelectedLanguageAccentCode !== 'undefined' &&
       lastSelectedLanguageAccentCode !== '' &&
-      lastSelectedLanguageAccentCode !== 'null' &&
-      lastSelectedLanguageAccentCode !== null
+      lastSelectedLanguageAccentCode !== 'null'
     ) {
       this.selectedLanguageAccentCode = lastSelectedLanguageAccentCode;
     } else {

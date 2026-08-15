@@ -21,7 +21,6 @@ from __future__ import annotations
 import logging
 import textwrap
 
-from core.domain import platform_parameter_list
 from core.platform.email import dev_mode_email_services
 from core.tests import test_utils
 

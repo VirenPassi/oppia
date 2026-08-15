@@ -924,7 +924,6 @@ def send_moderator_action_email(
         email_body: str. The email content/message.
     """
 
-    require_moderator_email_prereqs_are_satisfied()
     email_config = feconf.VALID_MODERATOR_ACTIONS[intent]
 
     recipient_username = user_services.get_username(recipient_id)

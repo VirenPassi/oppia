@@ -16,7 +16,6 @@
 
 from __future__ import annotations
 
-import datetime
 import os
 
 from core import feature_flag_list, feconf, utils
@@ -314,8 +313,8 @@ class TopicEditorStoryHandlerTests(BaseTopicEditorControllerTests):
             ],
             thumbnail_filename='img.svg',
             url_fragment='url',
-            story_model_created_on=datetime.datetime.today(),
-            story_model_last_updated=datetime.datetime.today(),
+            story_model_created_on=utils.get_current_local_datetime(),
+            story_model_last_updated=utils.get_current_local_datetime(),
         )
         story_services.save_story_summary(story_summary)
 
@@ -787,7 +786,6 @@ class TopicEditorTests(
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (
                 platform_parameter_list.ParamName.ADMIN_EMAIL_ADDRESS,
                 'testadmin@example.com',
@@ -921,7 +919,6 @@ class TopicEditorTests(
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (
                 platform_parameter_list.ParamName.ADMIN_EMAIL_ADDRESS,
                 'testadmin@example.com',
@@ -1402,7 +1399,6 @@ class TopicPublishSendMailHandlerTests(
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (
                 platform_parameter_list.ParamName.ADMIN_EMAIL_ADDRESS,
                 'testadmin@example.com',

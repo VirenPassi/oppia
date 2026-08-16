@@ -80,7 +80,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -197,7 +196,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -223,7 +221,12 @@ class TasksTests(test_utils.EmailTestBase):
 
         user_id = self.user_id_a
         user_services.update_email_preferences(
-            user_id, True, False, False, False
+            user_id,
+            True,
+            False,
+            False,
+            False,
+            feconf.DEFAULT_CONTRIBUTOR_DASHBOARD_EMAIL_PREFERENCE,
         )
 
         payload = {
@@ -264,7 +267,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -317,7 +319,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -364,7 +365,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -414,7 +414,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -455,7 +454,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -524,7 +522,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -591,7 +588,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (
@@ -1240,7 +1236,6 @@ class TasksTests(test_utils.EmailTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (platform_parameter_list.ParamName.EMAIL_FOOTER, EMAIL_FOOTER),
             (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'sender'),
             (

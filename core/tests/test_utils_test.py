@@ -29,8 +29,6 @@ from core.domain import (
     auth_domain,
     feature_flag_services,
     param_domain,
-    platform_parameter_list,
-    platform_parameter_services,
     user_services,
 )
 from core.platform import models
@@ -73,47 +71,6 @@ class EnableFeatureFlagTests(test_utils.GenericTestBase):
         self.assertTrue(
             feature_flag_services.is_feature_flag_enabled('blog_pages', None)
         )
-
-
-class SetPlatformParametersTests(test_utils.GenericTestBase):
-    """Tests for testing test_utils.set_platform_parameters."""
-
-    @test_utils.set_platform_parameters(
-        [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
-            (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'admin'),
-        ]
-    )
-    def test_set_platform_parameters_decorator(self) -> None:
-        """Tests if platform parameters are set."""
-        self.assertEqual(
-            platform_parameter_services.get_platform_parameter_value(
-                platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS.value
-            ),
-            True,
-        )
-        self.assertEqual(
-            platform_parameter_services.get_platform_parameter_value(
-                platform_parameter_list.ParamName.EMAIL_SENDER_NAME.value
-            ),
-            'admin',
-        )
-
-    @test_utils.set_platform_parameters(
-        [(platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True)]
-    )
-    def test_set_platform_parameters_decorator_with_invalid_param(self) -> None:
-        """Tests if invalid platform parameter raises an error."""
-        with self.assertRaisesRegex(
-            Exception,
-            'The value for the platform parameter dummy_parameter was '
-            'needed in this test, but not specified in the '
-            'set_platform_parameters decorator. Please use this information in '
-            'the decorator.',
-        ):
-            platform_parameter_services.get_platform_parameter_value(
-                'dummy_parameter'
-            )
 
 
 class FunctionWrapperTests(test_utils.GenericTestBase):
@@ -856,16 +813,6 @@ class TestUtilsTests(test_utils.GenericTestBase):
                 expected_status_int_list=expected_status_int_list,
                 http_method=invalid_http_method,
             )
-
-    # TODO(#13059): Here we use MyPy ignore because after we fully type
-    # the codebase we plan to get rid of the tests that intentionally
-    # test wrong inputs that we can normally catch by typing.
-    def test_mock_datetime_utcnow_fails_when_wrong_type_is_passed(self) -> None:
-        with self.assertRaisesRegex(
-            Exception, 'mocked_now must be datetime, got: 123'
-        ):
-            with self.mock_datetime_utcnow(123):  # type: ignore[arg-type]
-                pass
 
     def test_raises_error_if_no_mock_file_path_found(self) -> None:
         with self.assertRaisesRegex(

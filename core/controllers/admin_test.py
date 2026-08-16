@@ -16,7 +16,6 @@
 
 from __future__ import annotations
 
-import datetime
 import enum
 import logging
 
@@ -4065,7 +4064,6 @@ class SendDummyMailTest(test_utils.GenericTestBase):
 
     @test_utils.set_platform_parameters(
         [
-            (platform_parameter_list.ParamName.SERVER_CAN_SEND_EMAILS, True),
             (
                 platform_parameter_list.ParamName.ADMIN_EMAIL_ADDRESS,
                 'testadmin@example.com',
@@ -4456,7 +4454,7 @@ class UpdateBlogPostHandlerTest(test_utils.GenericTestBase):
         model.thumbnail_filename = 'image.png'
         model.content = 'hello bloggers'
         model.url_fragment = 'sample'
-        model.published_on = datetime.datetime.utcnow()
+        model.published_on = utils.get_current_utc_datetime()
         model.update_timestamps()
         model.put()
 

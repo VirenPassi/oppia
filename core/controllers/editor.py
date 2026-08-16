@@ -18,7 +18,6 @@
 
 from __future__ import annotations
 
-import datetime
 import logging
 
 from core import feature_flag_list, feconf, utils
@@ -748,7 +747,6 @@ class ExplorationModeratorRightsHandler(
             raise self.InvalidInputException(
                 'Moderator actions should include an email to the recipient.'
             )
-        email_manager.require_moderator_email_prereqs_are_satisfied()
 
         # Unpublish exploration.
         rights_manager.unpublish_exploration(self.user, exploration_id)
@@ -1518,7 +1516,7 @@ class EditorAutosaveHandler(ExplorationHandler):
                     self.user_id,
                     change_list,
                     version,
-                    datetime.datetime.utcnow(),
+                    utils.get_current_utc_datetime(),
                 )
             elif can_voiceover:
                 exp_services.create_or_update_draft(
@@ -1526,7 +1524,7 @@ class EditorAutosaveHandler(ExplorationHandler):
                     self.user_id,
                     change_list,
                     version,
-                    datetime.datetime.utcnow(),
+                    utils.get_current_utc_datetime(),
                     is_by_voice_artist=True,
                 )
         except utils.ValidationError as e:

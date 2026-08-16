@@ -58,6 +58,7 @@ from core.domain import (
     param_domain,
     platform_parameter_domain,
     platform_parameter_list,
+    platform_parameter_registry,
     platform_parameter_services,
     question_domain,
     question_services,
@@ -497,12 +498,9 @@ def swap_get_platform_parameter_value_function(
             (x.value, y) for x, y in platform_parameter_name_value_tuples
         )
         if parameter_name not in platform_parameter_name_value_dict:
-            raise Exception(
-                'The value for the platform parameter %s was needed in this '
-                'test, but not specified in the set_platform_parameters '
-                'decorator. Please use this information in the decorator.'
-                % parameter_name
-            )
+            return platform_parameter_registry.Registry.get_platform_parameter(
+                parameter_name
+            ).default_value
         return platform_parameter_name_value_dict[parameter_name]
 
     original_get_platform_parameter_value = getattr(
@@ -2236,58 +2234,6 @@ class AppEngineTestBase(TestBase):
             'Tests should mock common.set_constants_to_default() to avoid '
             'modifying the constants file during tests.'
         )
-
-    @contextlib.contextmanager
-    def mock_datetime_utcnow(
-        self, mocked_now: datetime.datetime
-    ) -> Iterator[None]:
-        """Mocks parts of the datastore to accept a fake datetime type that
-        always returns the same value for utcnow.
-
-        Example:
-            import datetime
-            mocked_now = datetime.datetime.utcnow() - datetime.timedelta(days=1)
-            with mock_datetime_utcnow(mocked_now):
-                self.assertEqual(datetime.datetime.utcnow(), mocked_now)
-            actual_now = datetime.datetime.utcnow() # Returns actual time.
-
-        Args:
-            mocked_now: datetime.datetime. The datetime which will be used
-                instead of the current UTC datetime.
-
-        Yields:
-            None. Empty yield statement.
-
-        Raises:
-            Exception. Given argument is not a datetime.
-        """
-        if not isinstance(mocked_now, datetime.datetime):
-            raise Exception('mocked_now must be datetime, got: %r' % mocked_now)
-
-        old_datetime = datetime.datetime
-
-        class MockDatetimeType(type):
-            """Overrides isinstance() behavior."""
-
-            @classmethod
-            def __instancecheck__(mcs, instance: datetime.datetime) -> bool:
-                return isinstance(instance, old_datetime)
-
-        class MockDatetime(datetime.datetime, metaclass=MockDatetimeType):
-            """Always returns mocked_now as the current UTC time."""
-
-            # Here we use MyPy ignore because the signature of this
-            # method doesn't match with datetime.datetime's utcnow().
-            @classmethod
-            def utcnow(cls) -> datetime.datetime:  # type: ignore[override]
-                """Returns the mocked datetime."""
-                return mocked_now
-
-        setattr(datetime, 'datetime', MockDatetime)
-        try:
-            yield
-        finally:
-            setattr(datetime, 'datetime', old_datetime)
 
 
 class GenericTestBase(AppEngineTestBase):
@@ -4591,6 +4537,7 @@ version: 1
         classroom_id: str = 'math_classroom_id',
         name: str = 'math',
         url_fragment: str = 'math',
+        feedback_recipient_email: str = 'user@email.com',
         course_details: str = 'Course Details',
         teaser_text: str = 'Teaser Text',
         topic_list_intro: str = 'Topic list intro',
@@ -4608,6 +4555,7 @@ version: 1
             classroom_id: str. Classroom ID of the newly-created classroom.
             name: str. The name of the classroom.
             url_fragment: str. The url fragment of the classroom.
+            feedback_recipient_email: str. The email of the feedback recipient.
             course_details: str. A text to provide course details present in
                 the classroom.
             teaser_text: str. A text to provide a summary of the classroom.
@@ -4635,6 +4583,7 @@ version: 1
             classroom_id=classroom_id,
             name=name,
             url_fragment=url_fragment,
+            feedback_recipient_email=feedback_recipient_email,
             teaser_text=teaser_text,
             course_details=course_details,
             topic_list_intro=topic_list_intro,

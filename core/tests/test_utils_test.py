@@ -73,10 +73,6 @@ class EnableFeatureFlagTests(test_utils.GenericTestBase):
         )
 
 
-class SetPlatformParametersTests(test_utils.GenericTestBase):
-    """Tests for testing test_utils.set_platform_parameters."""
-
-
 class FunctionWrapperTests(test_utils.GenericTestBase):
     """Test for testing test_utils.FunctionWrapper."""
 

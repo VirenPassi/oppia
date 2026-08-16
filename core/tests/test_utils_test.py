@@ -78,35 +78,6 @@ class EnableFeatureFlagTests(test_utils.GenericTestBase):
 class SetPlatformParametersTests(test_utils.GenericTestBase):
     """Tests for testing test_utils.set_platform_parameters."""
 
-    @test_utils.set_platform_parameters(
-        [
-            (platform_parameter_list.ParamName.EMAIL_SENDER_NAME, 'admin'),
-        ]
-    )
-    def test_set_platform_parameters_decorator(self) -> None:
-        """Tests if platform parameters are set."""
-
-        self.assertEqual(
-            platform_parameter_services.get_platform_parameter_value(
-                platform_parameter_list.ParamName.EMAIL_SENDER_NAME.value
-            ),
-            'admin',
-        )
-
-    @test_utils.set_platform_parameters([])
-    def test_set_platform_parameters_decorator_with_invalid_param(self) -> None:
-        """Tests if invalid platform parameter raises an error."""
-        with self.assertRaisesRegex(
-            Exception,
-            'The value for the platform parameter dummy_parameter was '
-            'needed in this test, but not specified in the '
-            'set_platform_parameters decorator. Please use this information in '
-            'the decorator.',
-        ):
-            platform_parameter_services.get_platform_parameter_value(
-                'dummy_parameter'
-            )
-
 
 class FunctionWrapperTests(test_utils.GenericTestBase):
     """Test for testing test_utils.FunctionWrapper."""

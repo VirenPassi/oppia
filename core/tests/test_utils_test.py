@@ -29,8 +29,6 @@ from core.domain import (
     auth_domain,
     feature_flag_services,
     param_domain,
-    platform_parameter_list,
-    platform_parameter_services,
     user_services,
 )
 from core.platform import models
